@@ -1,0 +1,152 @@
+Register a New User
+URL: /register
+Method: POST
+Description: Register a new user with the provided details.
+Request Body:
+name (string, required): User's name.
+username (string, required): User's username.
+email (string, required): User's email address.
+password (string, required): User's password (minimum 8 characters).
+Success Response:
+Code: 201 Created
+Content: { "token": "<auth_token>" }
+Error Response:
+Code: 422 Unprocessable Entity
+Content: { "error": { "<field>": ["<error_message>"] } }
+Log In to the System
+URL: /login
+Method: POST
+Description: Log in to the system with the provided credentials.
+Request Body:
+email (string, required): User's email address.
+password (string, required): User's password.
+Success Response:
+Code: 200 OK
+Content:
+{
+    "token": "<auth_token>",
+    "user": {
+        "id": <user_id>,
+        "name": "<user_name>",
+        "email": "<user_email>",
+        "username": "<user_username>",
+        "role": "<user_role>"
+    }
+}
+Error Response:
+Code: 401 Unauthorized
+Content: { "error": "Invalid credentials" }
+Log Out from the System
+URL: /logout
+Method: POST
+Description: Log out from the system.
+Success Response:
+Code: 200 OK
+Content: { "message": "Successfully logged out" }
+
+List Posts
+Retrieve a list of posts with optional filtering, sorting, and searching.
+
+URL: /posts
+Method: GET
+Parameters:
+sort_by (optional): Field to sort by (default: created_at)
+sort_dir (optional): Sorting direction (asc or desc, default: desc)
+admin_id (optional): Filter by admin ID
+start_date (optional): Start date for filtering by date range
+end_date (optional): End date for filtering by date range
+search (optional): Search query
+Success Response:
+Code: 200 OK
+Content: Array of post objects
+Error Response:
+Code: 500 Internal Server Error
+Content: Error message if the server encountered an error
+
+
+Create Post
+Create a new post with title, body, admin ID, and optional images.
+URL: /posts
+Method: POST
+Request Body:
+title (required): Title of the post
+body (required): Body content of the post
+admin_id (required): ID of the admin creating the post
+images (optional): Array of image files (JPEG, PNG, JPG, GIF, max size: 2MB)
+Success Response:
+Code: 201 Created
+Content: Success message if the post is created successfully
+Error Response:
+Code: 422 Unprocessable Entity
+Content: Validation errors if request data is invalid
+Code: 500 Internal Server Error
+Content: Error message if the server encountered an error
+
+
+Get Post by ID
+Retrieve a single post by its ID.
+URL: /posts/{id}
+Method: GET
+Parameters:
+id (required): ID of the post to retrieve
+Success Response:
+Code: 200 OK
+Content: Post object
+Error Response:
+Code: 404 Not Found
+Content: Error message if the post with the specified ID is not found
+
+
+Update Post
+Update an existing post by its ID with new title, body, admin ID, and optional images.
+URL: /posts/{id}
+Method: PUT
+Parameters:
+id (required): ID of the post to update
+Request Body:
+title (required): New title of the post
+body (required): New body content of the post
+admin_id (required): New admin ID of the post
+images (optional): Array of new image files (JPEG, PNG, JPG, GIF, max size: 2MB)
+Success Response:
+Code: 200 OK
+Content: Success message if the post is updated successfully
+Error Response:
+Code: 404 Not Found
+Content: Error message if the post with the specified ID is not found
+Code: 422 Unprocessable Entity
+Content: Validation errors if request data is invalid
+Code: 500 Internal Server Error
+Content: Error message if the server encountered an error
+
+Delete Post
+Delete a post by its ID.
+URL: /posts/{id}
+Method: DELETE
+Parameters:
+id (required): ID of the post to delete
+Success Response:
+Code: 200 OK
+Content: Success message if the post is deleted successfully
+Error Response:
+Code: 404 Not Found
+Content: Error message if the post with the specified ID is not found
+Code: 500 Internal Server Error
+Content: Error message if the server encountered an error
+
+Delete Image
+Delete an image associated with a post.
+
+URL: /posts/{postId}/images/{imageId}
+Method: DELETE
+Parameters:
+postId (required): ID of the post containing the image
+imageId (required): ID of the image to delete
+Success Response:
+Code: 200 OK
+Content: Success message if the image is deleted successfully
+Error Response:
+Code: 404 Not Found
+Content: Error message if the post or image with the specified IDs is not found
+Code: 500 Internal Server Error
+Content: Error message if the server encountered an error
