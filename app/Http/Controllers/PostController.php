@@ -60,7 +60,7 @@ public function index(Request $request)
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'body' => 'required|string',
-            'admin_id' => 'required|integer',
+            'user_id' => 'required|integer',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10000', // Example validation rules for images
         ]);
 
@@ -76,7 +76,7 @@ public function index(Request $request)
             $post = new Post();
             $post->title = $request->title;
             $post->body = $request->body;
-            $post->admin_id = $request->admin_id;
+            $post->user_id = $request->user_id;
             $post->save();
 
             // Process and save the images
@@ -131,7 +131,7 @@ public function show($id)
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'body' => 'required|string',
-            'admin_id' => 'required|integer',
+            'user_id' => 'required|integer',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10000', // Example validation rules for images
         ]);
 
@@ -148,7 +148,7 @@ public function show($id)
             // Update the post attributes
             $post->title = $request->title;
             $post->body = $request->body;
-            $post->admin_id = $request->admin_id;
+            $post->user_id = $request->admin_id;
             $post->save();
 
             // Process and save the images

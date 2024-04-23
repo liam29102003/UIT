@@ -59,14 +59,3 @@ Route::resource('/posts', PostController::class)->except(['index', 'show']);
 Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
 });
 
-Route::get('/posts/{id}', [PostController::class, 'show']);
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('/user', function () {
-        return response()->json("test2");
-    });
-    Route::post('/logout',[AdminAuthController::class,'logout']);
-    Route::resource('/posts', PostController::class)->except(['index','show']);
-    Route::delete('/posts/{postId}/images/{imageId}', [PostController::class,'deleteImage']);
-
-});
-
