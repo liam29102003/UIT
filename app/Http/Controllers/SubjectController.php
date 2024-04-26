@@ -22,11 +22,14 @@ class SubjectController extends Controller
             $subjects = Cache::get($cacheKey);
         } else {
             $sortBy = $request->query('sort_by', 'id');
-            $sortDir = $request->query('sort_dir');
-
+            $sortDir = $request->query('sort_dir','asc');
+            $faculty = $request->query('faculty');
             $query = Subject::orderBy($sortBy, $sortDir);
-
-            $subjects = $query->paginate(10);
+            $perPage = $request->query('per_page', 10); // Default per page is 10
+            if($faculty) {
+                $query = $query->where('faculty', $faculty);
+            }
+            $subjects = $query->paginate($perPage);
 
             Cache::put($cacheKey, $subjects, 60); 
         }

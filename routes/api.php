@@ -30,7 +30,15 @@ Route::get('/posts', [PostController::class, 'index']);
  * @return \Illuminate\Http\JsonResponse
  */
 Route::get('/posts/{id}', [PostController::class, 'show']);
+Route::get('/subjects', [SubjectController::class, 'index']);
 
+/**
+ * Retrieve a specific subject by its ID.
+ *
+ * @param int $id The ID of the subject to retrieve.
+ * @return \Illuminate\Http\JsonResponse
+ */
+Route::get('/subjects/{id}', [SubjectController::class, 'show']);
 /**
  * Middleware-protected routes for authenticated users.
  *
@@ -51,6 +59,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
      */
     Route::group(['middleware' => ['xss']], function () {
         Route::resource('/posts', PostController::class)->except(['index', 'show']);
+        Route::resource('/subjects', SubjectController::class)->except(['index', 'show']);
     });
     /**
      * Delete a specific image from a post.
@@ -61,19 +70,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
      */
     Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
 });
-Route::get('/subjects', [SubjectController::class, 'index']);
 
-/**
- * Retrieve a specific subject by its ID.
- *
- * @param int $id The ID of the subject to retrieve.
- * @return \Illuminate\Http\JsonResponse
- */
-Route::get('/subjects', [SubjectController::class, 'show']);
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::put('/subjects/{id}', [SubjectController::class, 'update']);
-    Route::delete('/subjects/{id}', [SubjectController::class, 'destroy']);
-});
 
-Route::resource('/subjects', SubjectController::class)->except(['index', 'show']);
+
