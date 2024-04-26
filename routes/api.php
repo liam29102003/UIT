@@ -18,8 +18,8 @@ use App\Http\Controllers\AdminAuthController;
 
 
 
-Route::post('/login',[AdminAuthController::class,'login']);
-Route::post('/register',[AdminAuthController::class,'register']);
+Route::post('/login', [AdminAuthController::class, 'login']);
+Route::post('/register', [AdminAuthController::class, 'register']);
 Route::get('/posts', [PostController::class, 'index']);
 /**
  * Retrieve a specific post by its ID.
@@ -37,25 +37,25 @@ Route::get('/posts/{id}', [PostController::class, 'show']);
  */
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
-/**
- * Log out the authenticated user.
- *
- * @return \Illuminate\Http\Response
- */
-Route::post('/logout', [AdminAuthController::class, 'logout']);
+    /**
+     * Log out the authenticated user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    Route::post('/logout', [AdminAuthController::class, 'logout']);
 
-/**
- * Resource routes for managing posts, except index and show.
- */
-Route::resource('/posts', PostController::class)->except(['index', 'show']);
-
-/**
- * Delete a specific image from a post.
- *
- * @param int $postId The ID of the post.
- * @param int $imageId The ID of the image to delete.
- * @return \Illuminate\Http\Response
- */
-Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
+    /**
+     * Resource routes for managing posts, except index and show.
+     */
+    Route::group(['middleware' => ['xss']], function () {
+        Route::resource('/posts', PostController::class)->except(['index', 'show']);
+    });
+    /**
+     * Delete a specific image from a post.
+     *
+     * @param int $postId The ID of the post.
+     * @param int $imageId The ID of the image to delete.
+     * @return \Illuminate\Http\Response
+     */
+    Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
 });
-
