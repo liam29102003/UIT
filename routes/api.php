@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\SubjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,7 @@ use App\Http\Controllers\AdminAuthController;
 Route::post('/login', [AdminAuthController::class, 'login']);
 Route::post('/register', [AdminAuthController::class, 'register']);
 Route::get('/posts', [PostController::class, 'index']);
+
 /**
  * Retrieve a specific post by its ID.
  *
@@ -59,3 +61,19 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
      */
     Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
 });
+Route::get('/subjects', [SubjectController::class, 'index']);
+
+/**
+ * Retrieve a specific subject by its ID.
+ *
+ * @param int $id The ID of the subject to retrieve.
+ * @return \Illuminate\Http\JsonResponse
+ */
+Route::get('/subjects', [SubjectController::class, 'show']);
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::put('/subjects/{id}', [SubjectController::class, 'update']);
+    Route::delete('/subjects/{id}', [SubjectController::class, 'destroy']);
+});
+
+Route::resource('/subjects', SubjectController::class)->except(['index', 'show']);
