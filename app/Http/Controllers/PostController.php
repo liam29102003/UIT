@@ -181,7 +181,8 @@ public function show($id)
         }
     }
 
-    public function destroy($id)
+    
+public function destroy($id)
 {
     try {
         // Find the post by ID
