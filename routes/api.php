@@ -4,8 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SubjectController;
+
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\ConferenceController;
+=======
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\AdminAuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +28,13 @@ use App\Http\Controllers\AdminAuthController;
 Route::post('/login', [AdminAuthController::class, 'login']);
 Route::post('/register', [AdminAuthController::class, 'register']);
 Route::get('/posts', [PostController::class, 'index']);
+
+///-------------------------Conferences -------------------------------////
+
+Route::get('/conferences',[ConferenceController::class,'index']); // conferences title list
+Route::get('/conferences/{id}',[ConferenceController::class,'show']); // conferences detail
+
+///--------------------------------------------------------------------------
 
 /**
  * Retrieve a specific post by its ID.
