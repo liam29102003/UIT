@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+
 use App\Models\Committee;
 use App\Models\ConferenceImage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+=======
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
 
 class Conference extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'title','conference_date','description','topics','general_chair',
         'co_chair','program_chair','paper_sub_guide','sub_deadline','updated_sub_deadline',
@@ -26,4 +32,5 @@ class Conference extends Model
     {
         return $this->hasMany(ConferenceImage::class);
     }
+
 }

@@ -4,8 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SubjectController;
+
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\ConferenceController;
+=======
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\AdminAuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +73,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['middleware' => ['xss']], function () {
         Route::resource('/posts', PostController::class)->except(['index', 'show']);
         Route::resource('/subjects', SubjectController::class)->except(['index', 'show']);
+
+        Route::resource('/teachers', TeacherController::class)->except(['index', 'show']);
     });
     /**
      * Delete a specific image from a post.
@@ -78,6 +85,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
      */
     Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
 });
+
 
 
 
