@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SubjectController;
 
-use App\Http\Controllers\AdminAuthController;
+// use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\ConferenceController;
-=======
+
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\AdminAuthController;
 
