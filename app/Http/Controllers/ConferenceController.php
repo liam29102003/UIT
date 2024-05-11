@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\Committee;
 use App\Models\Conference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -90,16 +91,19 @@ class ConferenceController extends Controller
             $conf->camera_ready = $request->camera_ready;
             $conf->brochure = $request->brochure;
             $conf->book = $request->book;
-            ////committee
-            // $conf->committee()->name = $request->committee_name;
-            // $conf->committee()->rank = $request->committee_rank;
-            // $conf->committee()->university = $request->committee_university;
-            // $conf->committee()->nation = $request->committee_nation;
-            // $conf->committee()->type = $request->committee_type;
-
             $conf->save();
 
-
+            foreach($conf->committee as $c){
+                $com = new Committee();
+                $com->name = $c->name;
+                $com->rank = $c->rank;
+                $com->university = $c->university;
+                $com->nation = $c->nation;
+                $com->type = $c->type;
+                $com->conference_id = $conf->title; // get conf title
+                $com->save();
+            }
+   
             // Process and save the images
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
@@ -146,7 +150,7 @@ class ConferenceController extends Controller
                 $conf = Conference::findOrFail($confId);
                 
                 // Find the image by ID and delete it
-                $image = $conf->images()->findOrFail($confId);
+                $image = $conf->images()->findOrFail($imageId);
                 Storage::delete($image->name);
 
                 $image->delete();
@@ -210,13 +214,15 @@ class ConferenceController extends Controller
                 $conf->camera_ready = $request->camera_ready;
                 $conf->brochure = $request->brochure;
                 $conf->book = $request->book;
+                $conf->save();
+                
                 ////committee
                 // $conf->committee()->name = $request->committee_name;
                 // $conf->committee()->rank = $request->committee_rank;
                 // $conf->committee()->university = $request->committee_university;
                 // $conf->committee()->nation = $request->committee_nation;
                 // $conf->committee()->type = $request->committee_type;
-                $conf->save();
+                
     
                 // Process and save the images
                 if ($request->hasFile('images')) {
