@@ -56,6 +56,7 @@ admin_id (optional): Filter by admin ID
 start_date (optional): Start date for filtering by date range
 end_date (optional): End date for filtering by date range
 search (optional): Search query
+per_page (optional): Number of results per page (default: 10)
 Success Response:
 Code: 200 OK
 Content: Array of post objects

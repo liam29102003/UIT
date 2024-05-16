@@ -3,7 +3,11 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
+<<<<<<< HEAD
         'reference' => '914b1b01df0043448c8dbf6ee16d6b9a5bd9ce6e',
+=======
+        'reference' => 'b924501af8a353683effd8cca6a2c399f26b45fd',
+>>>>>>> a47a5cee408c39c65d65e71220d324dc4b39437a
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -82,6 +86,15 @@
             'reference' => 'ebaaf5be6c0286928352e054f2d5125608e5405e',
             'type' => 'library',
             'install_path' => __DIR__ . '/../egulias/email-validator',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'ezyang/htmlpurifier' => array(
+            'pretty_version' => 'v4.17.0',
+            'version' => '4.17.0.0',
+            'reference' => 'bbc513d79acf6691fa9cf10f192c90dd2957f18c',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../ezyang/htmlpurifier',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -382,7 +395,11 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
+<<<<<<< HEAD
             'reference' => '914b1b01df0043448c8dbf6ee16d6b9a5bd9ce6e',
+=======
+            'reference' => 'b924501af8a353683effd8cca6a2c399f26b45fd',
+>>>>>>> a47a5cee408c39c65d65e71220d324dc4b39437a
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

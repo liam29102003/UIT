@@ -13,54 +13,57 @@ class PostController extends Controller
 {
     
 
-public function index(Request $request)
-{
-    // Define a cache key based on the request parameters
-    $cacheKey = 'posts_' . serialize($request->all());
-
-    // // Check if the data is already cached
-    if (Cache::has($cacheKey)) {
-        // If cached, retrieve and return the cached data
-        $posts = Cache::get($cacheKey);
-    } else {
-        // If not cached, fetch the posts from the database
-        $sortBy = $request->query('sort_by', 'created_at');
-        $sortDir = $request->query('sort_dir', 'desc');
-        $adminId = $request->query('admin_id');
-        $startDate = $request->query('start_date');
-        $endDate = $request->query('end_date');
-        $searchQuery = $request->query('search');
-
-        $query = Post::orderBy($sortBy, $sortDir);
-
-        if ($adminId) {
-            $query->where('admin_id', $adminId);
+    public function index(Request $request)
+    {
+        // Define a cache key based on the request parameters
+        $cacheKey = 'posts_' . serialize($request->all());
+    
+        // Check if the data is already cached
+        if (Cache::has($cacheKey)) {
+            // If cached, retrieve and return the cached data
+            $posts = Cache::get($cacheKey);
+        } else {
+            // If not cached, fetch the posts from the database
+            $sortBy = $request->query('sort_by', 'created_at');
+            $sortDir = $request->query('sort_dir', 'desc');
+            $adminId = $request->query('admin_id');
+            $startDate = $request->query('start_date');
+            $endDate = $request->query('end_date');
+            $searchQuery = $request->query('search');
+            $perPage = $request->query('per_page', 10); // Default per page is 10
+    
+            $query = Post::orderBy($sortBy, $sortDir);
+    
+            if ($adminId) {
+                $query->where('admin_id', $adminId);
+            }
+            if ($startDate && $endDate) {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
+            if ($searchQuery) {
+                $query->where(function ($q) use ($searchQuery) {
+                    $q->where('title', 'like', '%' . $searchQuery . '%')
+                      ->orWhere('body', 'like', '%' . $searchQuery . '%');
+                });
+            }
+    
+            $posts = $query->paginate($perPage);
+    
+            // Cache the fetched posts for 60 minutes (adjust as needed)
+            Cache::put($cacheKey, $posts, 60); // Cache for 60 minutes
         }
-        if ($startDate && $endDate) {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        }
-        if ($searchQuery) {
-            $query->where(function ($q) use ($searchQuery) {
-                $q->where('title', 'like', '%' . $searchQuery . '%')
-                  ->orWhere('body', 'like', '%' . $searchQuery . '%');
-            });
-        }
-
-        $posts = $query->paginate(10);
-
-        // Cache the fetched posts for 60 minutes (adjust as needed)
-        Cache::put($cacheKey, $posts, 60); // Cache for 60 minutes
+    
+        // Return the response
+        return response()->json($posts);
     }
-
-    // Return the response
-    return response()->json($posts);
-}    public function store(Request $request)
+    
+    public function store(Request $request)
     {
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'body' => 'required|string',
-            'admin_id' => 'required|integer',
+            'user_id' => 'required|integer',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10000', // Example validation rules for images
         ]);
 
@@ -71,12 +74,14 @@ public function index(Request $request)
         }
 
         try {
+            
             // Validation passed, proceed with creating the post
             // Create a new post
             $post = new Post();
+            
             $post->title = $request->title;
             $post->body = $request->body;
-            $post->admin_id = $request->admin_id;
+            $post->user_id = $request->user_id;
             $post->save();
 
             // Process and save the images
@@ -131,7 +136,7 @@ public function show($id)
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'body' => 'required|string',
-            'admin_id' => 'required|integer',
+            'user_id' => 'required|integer',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10000', // Example validation rules for images
         ]);
 
@@ -148,7 +153,7 @@ public function show($id)
             // Update the post attributes
             $post->title = $request->title;
             $post->body = $request->body;
-            $post->admin_id = $request->admin_id;
+            $post->user_id = $request->admin_id;
             $post->save();
 
             // Process and save the images

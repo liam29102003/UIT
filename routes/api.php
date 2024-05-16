@@ -34,7 +34,10 @@ Route::get('/staff', [StaffController::class, 'index']);
 Route::get('/posts/{id}', [PostController::class, 'show']);
 Route::get('/subjects', [SubjectController::class, 'index']);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a47a5cee408c39c65d65e71220d324dc4b39437a
 /**
  * Retrieve a specific subject by its ID.
  *
@@ -42,6 +45,7 @@ Route::get('/subjects', [SubjectController::class, 'index']);
  * @return \Illuminate\Http\JsonResponse
  */
 Route::get('/subjects/{id}', [SubjectController::class, 'show']);
+<<<<<<< HEAD
 
 /**
  * Retrieve a specific staff by its ID.
@@ -50,6 +54,8 @@ Route::get('/subjects/{id}', [SubjectController::class, 'show']);
  * @return \Illuminate\Http\JsonResponse
  */
 Route::get('/staff/{id}', [StaffController::class, 'show']);
+=======
+>>>>>>> a47a5cee408c39c65d65e71220d324dc4b39437a
 /**
  * Middleware-protected routes for authenticated users.
  *
@@ -71,7 +77,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['middleware' => ['xss']], function () {
         Route::resource('/posts', PostController::class)->except(['index', 'show']);
         Route::resource('/subjects', SubjectController::class)->except(['index', 'show']);
+<<<<<<< HEAD
         Route::resource('/staff', StaffController::class)->except(['index', 'show']);
+=======
+>>>>>>> a47a5cee408c39c65d65e71220d324dc4b39437a
     });
     /**
      * Delete a specific image from a post.
@@ -81,6 +90,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
      * @return \Illuminate\Http\Response
      */
     Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
+<<<<<<< HEAD
 
     /**
      * Delete a specific image from a staff member.
@@ -90,3 +100,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
      */
     Route::delete('/staff/{staffId}/image', [StaffController::class, 'deleteImage']);
 });
+=======
+});
+
+
+
+
+>>>>>>> a47a5cee408c39c65d65e71220d324dc4b39437a
