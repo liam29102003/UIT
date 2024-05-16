@@ -22,11 +22,14 @@ class SubjectController extends Controller
             $subjects = Cache::get($cacheKey);
         } else {
             $sortBy = $request->query('sort_by', 'id');
-            $sortDir = $request->query('sort_dir');
-
+            $sortDir = $request->query('sort_dir','asc');
+            $faculty = $request->query('faculty');
             $query = Subject::orderBy($sortBy, $sortDir);
-
-            $subjects = $query->paginate(10);
+            $perPage = $request->query('per_page', 10); // Default per page is 10
+            if($faculty) {
+                $query = $query->where('faculty', $faculty);
+            }
+            $subjects = $query->paginate($perPage);
 
             Cache::put($cacheKey, $subjects, 60); 
         }
@@ -134,7 +137,7 @@ class SubjectController extends Controller
         return response()->json(['message' => 'Subject updated successfully'], 200);
     } catch (QueryException $e) {
         // If an exception occurs during database operation, return an error
-        return response()->json(['error' => 'Failed to update post'], 500);
+        return response()->json(['error' => 'Failed to update subject'], 500);
     }
 }
     public function destroy($id)

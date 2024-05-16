@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\StaffController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +20,10 @@ use App\Http\Controllers\SubjectController;
 
 
 
-Route::post('/login',[AdminAuthController::class,'login']);
-Route::post('/register',[AdminAuthController::class,'register']);
+Route::post('/login', [AdminAuthController::class, 'login']);
+Route::post('/register', [AdminAuthController::class, 'register']);
 Route::get('/posts', [PostController::class, 'index']);
+Route::get('/staff', [StaffController::class, 'index']);
 
 /**
  * Retrieve a specific post by its ID.
@@ -30,7 +32,24 @@ Route::get('/posts', [PostController::class, 'index']);
  * @return \Illuminate\Http\JsonResponse
  */
 Route::get('/posts/{id}', [PostController::class, 'show']);
+Route::get('/subjects', [SubjectController::class, 'index']);
 
+
+/**
+ * Retrieve a specific subject by its ID.
+ *
+ * @param int $id The ID of the subject to retrieve.
+ * @return \Illuminate\Http\JsonResponse
+ */
+Route::get('/subjects/{id}', [SubjectController::class, 'show']);
+
+/**
+ * Retrieve a specific staff by its ID.
+ *
+ * @param int $id The ID of the staff to retrieve.
+ * @return \Illuminate\Http\JsonResponse
+ */
+Route::get('/staff/{id}', [StaffController::class, 'show']);
 /**
  * Middleware-protected routes for authenticated users.
  *
@@ -39,52 +58,35 @@ Route::get('/posts/{id}', [PostController::class, 'show']);
  */
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
-/**
- * Log out the authenticated user.
- *
- * @return \Illuminate\Http\Response
- */
-Route::post('/logout', [AdminAuthController::class, 'logout']);
+    /**
+     * Log out the authenticated user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    Route::post('/logout', [AdminAuthController::class, 'logout']);
 
-/**
- * Resource routes for managing posts, except index and show.
- */
-Route::resource('/posts', PostController::class)->except(['index', 'show']);
-
-/**
- * Delete a specific image from a post.
- *
- * @param int $postId The ID of the post.
- * @param int $imageId The ID of the image to delete.
- * @return \Illuminate\Http\Response
- */
-Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
-});
-
-Route::get('/posts/{id}', [PostController::class, 'show']);
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('/user', function () {
-        return response()->json("test2");
+    /**
+     * Resource routes for managing posts, except index and show.
+     */
+    Route::group(['middleware' => ['xss']], function () {
+        Route::resource('/posts', PostController::class)->except(['index', 'show']);
+        Route::resource('/subjects', SubjectController::class)->except(['index', 'show']);
+        Route::resource('/staff', StaffController::class)->except(['index', 'show']);
     });
-    Route::post('/logout',[AdminAuthController::class,'logout']);
-    Route::resource('/posts', PostController::class)->except(['index','show']);
-    Route::delete('/posts/{postId}/images/{imageId}', [PostController::class,'deleteImage']);
+    /**
+     * Delete a specific image from a post.
+     *
+     * @param int $postId The ID of the post.
+     * @param int $imageId The ID of the image to delete.
+     * @return \Illuminate\Http\Response
+     */
+    Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
 
+    /**
+     * Delete a specific image from a staff member.
+     *
+     * @param int $staffId The ID of the staff member.
+     * @return \Illuminate\Http\Response
+     */
+    Route::delete('/staff/{staffId}/image', [StaffController::class, 'deleteImage']);
 });
-
-Route::get('/subjects', [SubjectController::class, 'index']);
-
-/**
- * Retrieve a specific subject by its ID.
- *
- * @param int $id The ID of the subject to retrieve.
- * @return \Illuminate\Http\JsonResponse
- */
-Route::get('/subjects', [SubjectController::class, 'show']);
-
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::put('/subjects/{id}', [SubjectController::class, 'update']);
-    Route::delete('/subjects/{id}', [SubjectController::class, 'destroy']);
-});
-
-Route::resource('/subjects', SubjectController::class)->except(['index', 'show']);
