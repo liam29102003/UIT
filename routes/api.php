@@ -10,6 +10,7 @@ use App\Http\Controllers\ConferenceController;
 =======
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\StaffController;
 
 
 /*
@@ -28,6 +29,7 @@ use App\Http\Controllers\AdminAuthController;
 Route::post('/login', [AdminAuthController::class, 'login']);
 Route::post('/register', [AdminAuthController::class, 'register']);
 Route::get('/posts', [PostController::class, 'index']);
+Route::get('/staff', [StaffController::class, 'index']);
 
 ///-------------------------Conferences -------------------------------////
 
@@ -52,6 +54,14 @@ Route::get('/subjects', [SubjectController::class, 'index']);
  * @return \Illuminate\Http\JsonResponse
  */
 Route::get('/subjects/{id}', [SubjectController::class, 'show']);
+
+/**
+ * Retrieve a specific staff by its ID.
+ *
+ * @param int $id The ID of the staff to retrieve.
+ * @return \Illuminate\Http\JsonResponse
+ */
+Route::get('/staff/{id}', [StaffController::class, 'show']);
 /**
  * Middleware-protected routes for authenticated users.
  *
@@ -75,6 +85,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::resource('/subjects', SubjectController::class)->except(['index', 'show']);
 
         Route::resource('/teachers', TeacherController::class)->except(['index', 'show']);
+
+        Route::resource('/staff', StaffController::class)->except(['index', 'show']);
     });
     /**
      * Delete a specific image from a post.
@@ -84,6 +96,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
      * @return \Illuminate\Http\Response
      */
     Route::delete('/posts/{postId}/images/{imageId}', [PostController::class, 'deleteImage']);
+
+    /**
+     * Delete a specific image from a staff member.
+     *
+     * @param int $staffId The ID of the staff member.
+     * @return \Illuminate\Http\Response
+     */
+    Route::delete('/staff/{staffId}/image', [StaffController::class, 'deleteImage']);
 });
 
 
