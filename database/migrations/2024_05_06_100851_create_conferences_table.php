@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('conferences', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->longText('paperCall');
             $table->date('updated_deadline')->nullable();
             $table->date('original_deadline')->nullable();
@@ -25,6 +26,8 @@ return new class extends Migration
             $table->bigInteger('foreign_fee');
             $table->date('conference_date');
             $table->string('paper_format');
+            $table->json('topics')->default(json_encode(['Ai','Cloud','Deep Learning'])); // Define 'topics' column with default empty array
+            $table->string('images');
             $table->timestamps();
         });
     }

@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('committees', function (Blueprint $table) {
+        Schema::create('committe_members', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('conference_id')->constrained()->onDelete('cascade');
             $table->string('rank');
-            $table->string('university');
+            $table->string('position')->nullable();
+            $table->foreignId('conference_id')->constrained();
+            $table->enum('speaker_type',['keynote','invited','none']);
+            $table->enum('member_type',['organizing','program','none']);
+            $table->enum('chair_type',['general chair', 'general co-chair', 'program chair','none']);
             $table->string('nation');
-            $table->string('type');
+            $table->string('university');
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('committees');
+        Schema::dropIfExists('committe_members');
     }
 };
