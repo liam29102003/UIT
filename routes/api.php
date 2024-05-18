@@ -17,6 +17,7 @@ use App\Http\Controllers\AdminAuthController;
 Route::post('/login', [AdminAuthController::class, 'login']);
 Route::post('/register', [AdminAuthController::class, 'register']);
 Route::get('/posts', [PostController::class, 'index']);
+Route::get('/staff', [StaffController::class, 'index']);
 
 ///-------------------------Conferences -------------------------------////
 
@@ -40,6 +41,14 @@ Route::get('/subjects', [SubjectController::class, 'index']);
  * @return \Illuminate\Http\JsonResponse
  */
 Route::get('/subjects/{id}', [SubjectController::class, 'show']);
+
+/**
+ * Retrieve a specific staff by its ID.
+ *
+ * @param int $id The ID of the staff to retrieve.
+ * @return \Illuminate\Http\JsonResponse
+ */
+Route::get('/staff/{id}', [StaffController::class, 'show']);
 /**
  * Middleware-protected routes for authenticated users.
  */
