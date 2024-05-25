@@ -55,111 +55,63 @@ class StaffController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:10000',
+        $validator = Validator::make($request->all(),[
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:10000',
             'name' => 'required|string',
             'position' => 'required|string',
             'biography' => 'required|string',
             'education' => 'required|string',
+            'publications' => 'required|string',
+            'research' => 'required|string',
+            'staff_id' => 'required|integer',
         ]);
 
-        if ($validator->fails()) {
+        if($validator->fails()){
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
-        try {
-            $purifierConfig = HTMLPurifier_Config::createDefault();
+        try{
+            $purifierConfig=HTMLPurifier_Config::createDefault();
             $purifier = new HTMLPurifier($purifierConfig);
 
             $staffName = $purifier->purify($request->name);
             $position = $purifier->purify($request->position);
             $biography = $purifier->purify($request->biography);
             $education = $purifier->purify($request->education);
+            $publications = $purifier->purify($request->publications);
+            $research = $purifier->purify($request->research);
+            $staffId = $purifier->purify($request->staff_id);
 
             $staff = new Staff();
-            $staff->name = $staffName;
-            $staff->position = $position;
-            $staff->biography = $biography;
-            $staff->education = $education;
-
+            $staff->name= $staffName;
+            $staff->position= $position;
+            $staff->biography= $biography;
+            $staff->education= $education;
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $imageName = time() . '_' . $image->getClientOriginalName();
                 $path = $image->storeAs('images', $imageName);
                 $staff->image = $path; // Store the path in the image column
             }
-
             $staff->save();
-
-            return response()->json(['message' => 'Staff created successfully'], 201);
-        } catch (QueryException $e) {
-            return response()->json(['error' => 'Failed to create Staff: ' . $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Store a new publication.
-     */
-    public function storePublication(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'publications' => 'required|string',
-            'staff_id' => 'required|integer|exists:staff,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            $purifierConfig = HTMLPurifier_Config::createDefault();
-            $purifier = new HTMLPurifier($purifierConfig);
-
-            $publications = $purifier->purify($request->publications);
-            $staffId = $purifier->purify($request->staff_id);
 
             $publication = new Publication();
             $publication->publications = $publications;
-            $publication->staff_id = $staffId; 
+            $publication->staff_id = $staff->id;
             $publication->save();
-
-            return response()->json(['message' => 'Publication created successfully'], 201);
-        } catch (QueryException $e) {
-            return response()->json(['error' => 'Failed to create Publication: ' . $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Store a new research interest.
-     */
-    public function storeResearchInterest(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'research' => 'required|string',
-            'staff_id' => 'required|integer|exists:staff,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            $purifierConfig = HTMLPurifier_Config::createDefault();
-            $purifier = new HTMLPurifier($purifierConfig);
-
-            $research = $purifier->purify($request->research);
-            $staffId = $purifier->purify($request->staff_id);
 
             $researchInterest = new ResearchInterest();
             $researchInterest->research = $research;
-            $researchInterest->staff_id = $staffId; 
+            $researchInterest->staff_id = $staff->id;
             $researchInterest->save();
 
-            return response()->json(['message' => 'Research Interest created successfully'], 201);
+            return response()->json(['message' => 'Staff created successfully'] , 201);
         } catch (QueryException $e) {
-            return response()->json(['error' => 'Failed to create Research Interest: ' . $e->getMessage()], 500);
+            // If an exception occurs, return an error response
+            return response()->json(['error' => 'Failed to create Subject'], 500);
         }
+        
     }
+
 
     /**
      * Display the specified resource.
@@ -194,14 +146,16 @@ class StaffController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function updateStaff(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:10000',
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:10000',
             'name' => 'required|string',
             'position' => 'required|string',
             'biography' => 'required|string',
             'education' => 'required|string',
+            'publications' => 'required|string',
+            'research' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -211,22 +165,16 @@ class StaffController extends Controller
         try {
             $purifierConfig = HTMLPurifier_Config::createDefault();
             $purifier = new HTMLPurifier($purifierConfig);
-            $staff = Staff::findOrFail($id);
 
-            // Update fields
-            $staff->update([
-                'name' => $purifier->purify($request->name),
-                'position' => $purifier->purify($request->position),
-                'biography' => $purifier->purify($request->biography),
-                'education' => $purifier->purify($request->education)
-            ]);
+            $staff = Staff::findOrFail($id); // Find the staff or fail with an exception
+
+            // Purifying request data
+            $staff->name = $purifier->purify($request->name);
+            $staff->position = $purifier->purify($request->position);
+            $staff->biography = $purifier->purify($request->biography);
+            $staff->education = $purifier->purify($request->education);
 
             if ($request->hasFile('image')) {
-                // Delete the old image if it exists
-                if ($staff->image) {
-                    Storage::delete($staff->image);
-                }
-
                 $image = $request->file('image');
                 $imageName = time() . '_' . $image->getClientOriginalName();
                 $path = $image->storeAs('images', $imageName);
@@ -235,77 +183,27 @@ class StaffController extends Controller
 
             $staff->save();
 
+            // Assuming each staff has one publication and one research interest record
+            Publication::updateOrCreate(
+                ['staff_id' => $staff->id],
+                ['publications' => $purifier->purify($request->publications)]
+            );
+
+            ResearchInterest::updateOrCreate(
+                ['staff_id' => $staff->id],
+                ['research' => $purifier->purify($request->research)]
+            );
+
             return response()->json(['message' => 'Staff updated successfully'], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Staff not found'], 404);
         } catch (QueryException $e) {
-            return response()->json(['error' => 'Failed to update staff: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to update staff'], 500);
         }
     }
 
-    /**
-     * Update a publication.
-     */
-    public function updatePublication(Request $request, int $publicationId)
-    {
-        $validator = Validator::make($request->all(), [
-            'publications' => 'required|string',
-            'staff_id' => 'required|integer|exists:staff,id'
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            $publication = Publication::findOrFail($publicationId);
-            $purifierConfig = HTMLPurifier_Config::createDefault();
-            $purifier = new HTMLPurifier($purifierConfig);
-
-            $publication->update([
-                'publications' => $purifier->purify($request->publications),
-                'staff_id' => $request->staff_id
-            ]);
-
-            return response()->json(['message' => 'Publication updated successfully'], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Publication not found'], 404);
-        } catch (QueryException $e) {
-            return response()->json(['error' => 'Failed to update publication: ' . $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Update a research interest.
-     */
-    public function updateResearchInterest(Request $request, int $researchInterestId)
-    {
-        $validator = Validator::make($request->all(), [
-            'research' => 'required|string',
-            'staff_id' => 'required|integer|exists:staff,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            $researchInterest = ResearchInterest::findOrFail($researchInterestId);
-            $purifierConfig = HTMLPurifier_Config::createDefault();
-            $purifier = new HTMLPurifier($purifierConfig);
-
-            $researchInterest->update([
-                'research' => $purifier->purify($request->research),
-                'staff_id' => $request->staff_id
-            ]);
-
-            return response()->json(['message' => 'Research interest updated successfully'], 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Research interest not found'], 404);
-        } catch (QueryException $e) {
-            return response()->json(['error' => 'Failed to update research interest: ' . $e->getMessage()], 500);
-        }
-    }
+    
 
     /**
      * Remove the specified resource from storage.
