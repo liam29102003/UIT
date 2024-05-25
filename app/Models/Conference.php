@@ -5,32 +5,30 @@ namespace App\Models;
 
 use App\Models\Committee;
 use App\Models\ConferenceImage;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-=======
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+
 
 
 class Conference extends Model
 {
-    use HasFactory;
+    // use HasFactory;
+    // use HasUuids;
 
     protected $fillable = [
-        'title','conference_date','description','topics','general_chair',
-        'co_chair','program_chair','paper_sub_guide','sub_deadline','updated_sub_deadline',
-        'accept_noti','normal_fee','early_bird_fee','local_fee','sub_email','camera_ready',
-        'brochure','book'
+       'name','paperCall', 'updated_deadline', 'original_deadline', 'status', 'accept_noti',
+        'email', 'book', 'brochure', 'local_fee', 'foreign_fee', 'conference_date',
+        'paper_format', 'topics', 'images'
     ];
 
-    public function committee()
+    protected $casts = [
+        'topics' => 'array',  // Casting topics to array
+    ];
+    public function committe_members()
     {
-        return $this->hasMany(Committee::class);
+        return $this->hasMany(CommitteMember::class);
     }
 
-    public function conferenceimage()
-    {
-        return $this->hasMany(ConferenceImage::class);
-    }
 
 }

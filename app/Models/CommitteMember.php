@@ -6,13 +6,12 @@ use App\Models\Conference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Committee extends Model
+class CommitteMember extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name','rank','university','nation','type','conference_id'
+        'name', 'rank', 'position','speaker_type','member_type', 'chair_type', 'nation', 'university','conference_id'
     ];
-
     public function conference()
     {
         $this->belongsTo(Conference::class);
